@@ -1,4 +1,4 @@
-import requests, time
+import requests, time, re, os
 from bs4 import BeautifulSoup
 
 #URLを打ち込む。オートプレイページのみ対応　単一音声ページも可能ならしたいかもしれない。
@@ -31,8 +31,15 @@ for i in bs.select("a[title]"):
         
         if count == 2:
             userName = i.string
+            try:
+                #ユーザー名のディレクトリを作成、mp3をその中に保存するために移動。
+                os.mkdir(userName)
+                os.chdir(userName)
+            except FileExistsError:
+                pass
 
-        #デバッグ用　多分残すけど対象音声表示
+
+        #対象音声表示
         print(i)
 
         #URL部分を対象としてレスポンスを取得する。 = これで単一音声ページが取得できる。
@@ -46,6 +53,9 @@ for i in bs.select("a[title]"):
         #タイトルも取得する
         titleStr = i['title']
         mp3title = titleStr[1:-4]
+
+        #ファイル名に無効な文字を削除する。
+        mp3title = re.sub(r'[\\/:*?"<>|]+','',mp3title)
 
         #音声番号の取得
         index = pageUrl.find("=")
