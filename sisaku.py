@@ -33,8 +33,9 @@ for i in bs.select("a[title]"):
             userName = i.string
             try:
                 #ユーザー名のディレクトリを作成、mp3をその中に保存するために移動。
-                os.mkdir(userName)
-                os.chdir(userName)
+                folderName = re.sub(r'[\\/:*?"<>|]+','',userName)
+                os.mkdir(folderName)
+                os.chdir(folderName)
             except FileExistsError:
                 pass
 
